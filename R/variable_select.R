@@ -114,7 +114,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
             paramFilePath, 
             datatable, 
             as.integer(numpreds), 
-            as.integer(do_geo))
+            as.integer(do_geo), PACKAGE = 'gdmToolbox')
   
   fullparamfilepath <- paste0(wdpath, "\\", paramFilePath)
   z1 <- .C( "ExtractAndUpdateQuantilesSigTest", fullparamfilepath)
@@ -134,6 +134,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
               
   
 }
+
 
 
 #'@title Helper
