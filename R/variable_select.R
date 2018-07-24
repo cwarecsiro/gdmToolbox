@@ -107,7 +107,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   wdpath = gsub('/', '\\\\', wdpath)
   paramFilePath = paste0(outname, '.txt')
   datatable = gsub( "\\\\",  "/", data)
-  data = gsub('/', '\\\\', data)
+  datatable = gsub('/', '\\\\', data)
   numpreds = as.integer(numpreds)
   do_geo = geo
   
