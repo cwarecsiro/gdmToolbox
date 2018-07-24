@@ -52,7 +52,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   }
   
   ## dst arg must exist
-  assert_that(dst, is.notempty(dst))
+  assert_that(is.notempty.string(dst))
   
   ## check dst is not empty
   try_dst = paste0(dst, '/', outname)
@@ -67,10 +67,10 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   }
   
   ## check permutations arg
-  assert_that(dst, is.integer(permutations))
+  assert_that(is.integer(permutations))
   
-  ## geo 
-  assert_that(dst, is.logical(geo))  
+  ## geo
+  assert_that(is.logical(geo))  
 
   if (verbose){
     if (geo){
