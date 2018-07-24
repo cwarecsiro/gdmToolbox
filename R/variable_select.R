@@ -14,6 +14,8 @@
 #'
 #'@examples gdm.variable_select(inputTable, dst_dir, analysis_1, 50, TRUE, FALSE, TRUE)
 #'
+#'@useDynLib gdmToolbox SaveGDMParams ExtractAndUpdateQuantilesSigTest DoSigTestGDM
+#'
 #'@importFrom gdm gdm
 #'@importFrom assertthat assert_that is.string
 #'@importFrom data.table fread
@@ -90,10 +92,10 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   check_arch = unlist(lapply(lapply(check_arch, length), function(x) x == 1))
   arch = opts[check_arch]
   if(arch == '64'){
-    dllpath = paste0(this_lib, '/gdmToolbox/libs/x64/GDM4Rext.dll')
+    dllpath = paste0(this_lib, '/gdmToolbox/libs/x64/gdmToolbox.dll')
   }
   if(arch == '86'){
-    dllpath = paste0(this_lib, '/gdmToolbox/libs/i386GDM4Rext.dll')
+    dllpath = paste0(this_lib, '/gdmToolbox/libs/i386/gdmToolbox.dll')
   }
   assert_that(file.exists(dllpath))
   ## format path and load
@@ -117,9 +119,11 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
             as.integer(do_geo), PACKAGE = 'gdmToolbox')
   
   fullparamfilepath <- paste0(wdpath, "\\", paramFilePath)
-  z1 <- .C( "ExtractAndUpdateQuantilesSigTest", fullparamfilepath)
+  z1 <- .C( "ExtractAndUpdateQuantilesSigTest", fullparamfilepath, 
+            PACKAGE = 'gdmToolbox')
   
-  z2 <- .C( "DoSigTestGDM", fullparamfilepath, as.integer(iterations))
+  z2 <- .C( "DoSigTestGDM", fullparamfilepath, as.integer(iterations), 
+            PACKAGE = 'gdmToolbox')
   
   dyn.unload(dllpath)
   

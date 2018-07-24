@@ -1,8 +1,8 @@
 Package: gdmToolbox
 Version: 0.01
 Date: 2018-07-24
-Title: Add-ons to gdmEngine / gdm 
-Description: Extra fruit for gdm to be incorporated later
+Title: Tools to fix gdmEngine 
+Description: Tools to fix/add to gdmEngine (eventually)
 Author: war42q
 Maintainer: Chris Ware <chris.ware@csiro.au>
 Licence: errr
