@@ -67,7 +67,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   }
   
   ## check permutations arg
-  assert_that(is.integer(permutations))
+  assert_that(is.numeric(permutations))
   
   ## geo
   assert_that(is.logical(geo))  
