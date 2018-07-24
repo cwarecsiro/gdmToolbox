@@ -75,10 +75,11 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   assert_that(is.logical(geo))  
 
   if (verbose){
+    cat('\n')
     if (geo){
-      print("Including geographic distance as a predictor")
+      cat("Including geographic distance as a predictor", sep = '\n')
     } else {
-      print("Excluding geographic distance as a predictor")
+      cat("Excluding geographic distance as a predictor", sep = '\n')
     } 
   }
   
@@ -111,6 +112,10 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   numpreds = as.numeric(numpreds)
   do_geo = geo
   
+  if (verbose) {
+    cat('Beginning significance testing', sep = '\n')
+  }
+  
   z0 <- .C( "SaveGDMParams", 
             wdpath, 
             paramFilePath, 
@@ -118,19 +123,30 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
             as.integer(numpreds), 
             as.integer(do_geo), PACKAGE = 'gdmToolbox')
   
+  if (verbose) {
+    cat('Parameter file written', sep = '\n')
+  }
+  
   fullparamfilepath <- paste0(wdpath, "\\", paramFilePath)
   z1 <- .C( "ExtractAndUpdateQuantilesSigTest", fullparamfilepath, 
             PACKAGE = 'gdmToolbox')
+  
+  if (verbose) {
+    cat(paste('Testing', numpreds, 'predictors, using',
+              permutations, 'permutations') sep = '\n')
+  }
   
   z2 <- .C( "DoSigTestGDM", fullparamfilepath, as.integer(permutations), 
             PACKAGE = 'gdmToolbox')
   
   dyn.unload(dllpath)
   
-  cat('Significance testing done. Output files located here:\n', dst, sep = '')
+  if (verbose) {
+    cat('Significance testing done. Output files located here:\n', dst, sep = '')
+  }
   
   if(load_output){
-    f = list.files(dst, pattern = '.csv')
+    f = list.files(dst, pattern = '.csv', full.names = TRUE)
     outputs = lapply(f, read.csv)
     names(outputs) = gsub('.csv', '', unlist(lapply(f, basename)))
     return(outputs)
