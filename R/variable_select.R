@@ -82,7 +82,19 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   
   ## find dll
   this_lib = dirname(find.package('gdmToolbox', .libPaths()))
-  dllpath = paste(this_lib, '/gdmToolbox/src/GDM4Rext.dll', sep = '/')
+  ## check architecture and then guess filepath to dll - possibly not 
+  ## a solid way of doing this...
+  arch = Sys.info()[['release']]
+  opts = c('86', '64')
+  check_arch = lapply(opts, function(x) grep(x, arch))
+  check_arch = unlist(lapply(lapply(check_arch, length), function(x) x == 1))
+  arch = opts[check_arch]
+  if(arch == '64'){
+    dllpath = paste0(this_lib, '/gdmToolbox/libs/x64/GDM4Rext.dll')
+  }
+  if(arch == '86'){
+    dllpath = paste0(this_lib, '/gdmToolbox/libs/i386GDM4Rext.dll')
+  }
   assert_that(file.exists(dllpath))
   ## format path and load
   dllpath = paste(strsplit(dllpath, '/')[[1]], collapse = '\\')
@@ -97,7 +109,12 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   numpreds = as.integer(numpreds)
   do_geo = geo
   
-  z0 <- .C( "SaveGDMParams", wdpath, paramFilePath, datatable, as.integer(numpreds), as.integer(do_geo))
+  z0 <- .C( "SaveGDMParams", 
+            wdpath, 
+            paramFilePath, 
+            datatable, 
+            as.integer(numpreds), 
+            as.integer(do_geo))
   
   fullparamfilepath <- paste0(wdpath, "\\", paramFilePath)
   z1 <- .C( "ExtractAndUpdateQuantilesSigTest", fullparamfilepath)
