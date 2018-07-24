@@ -122,7 +122,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   z1 <- .C( "ExtractAndUpdateQuantilesSigTest", fullparamfilepath, 
             PACKAGE = 'gdmToolbox')
   
-  z2 <- .C( "DoSigTestGDM", fullparamfilepath, as.integer(iterations), 
+  z2 <- .C( "DoSigTestGDM", fullparamfilepath, as.integer(permutations), 
             PACKAGE = 'gdmToolbox')
   
   dyn.unload(dllpath)
