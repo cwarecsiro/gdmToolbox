@@ -26,8 +26,8 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   
   ## check what data is
   data_class = class(data)
-  in_memory = sum(unlist(lapply(c('data.frame', 'matrix', 'data.table')), 
-                         function(x) grep(x, data_class)))
+  in_memory = sum(unlist(lapply(c('data.frame', 'matrix', 'data.table'), 
+                         function(x) grep(x, data_class))))
   if(in_memory > 0){
     ## in memory is true
     data = data.frame(data)
