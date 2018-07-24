@@ -133,7 +133,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   
   if (verbose) {
     cat(paste('Testing', numpreds, 'predictors, using',
-              permutations, 'permutations') sep = '\n')
+              permutations, 'permutations'), sep = '\n')
   }
   
   z2 <- .C( "DoSigTestGDM", fullparamfilepath, as.integer(permutations), 
