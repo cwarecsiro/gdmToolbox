@@ -15,7 +15,7 @@
 #'@examples gdm.variable_select(inputTable, dst_dir, analysis_1, 50, TRUE, FALSE, TRUE)
 #'
 #'@importFrom gdm gdm
-#'@importFrom assertthat assert_that
+#'@importFrom assertthat assert_that is.string
 #'@importFrom data.table fread
 #'
 #'@export
