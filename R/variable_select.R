@@ -46,7 +46,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
       if (!file.exists(data)){
         stop('data is of class character but is not a valid file path')
       } else {
-        numpreds = ncol(fread(data, nrows = 1L))
+        numpreds = (ncol(fread(data, nrows = 1L)) - 6) / 2
       }
     } else {
       stop('Cannot determine class of input data')
@@ -108,7 +108,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   paramFilePath = paste0(outname, '.txt')
   datatable = gsub( "\\\\",  "/", data)
   datatable = gsub('/', '\\\\', data)
-  numpreds = as.integer(numpreds)
+  numpreds = as.numeric(numpreds)
   do_geo = geo
   
   z0 <- .C( "SaveGDMParams", 
