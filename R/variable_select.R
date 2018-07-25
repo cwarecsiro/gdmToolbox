@@ -59,11 +59,12 @@ gdm.variable_significance = function(data, dst, outname = 'gdm_variable_signific
   ## check dst is empty
   try_dst = paste0(dst, '/', outname)
   if(file.exists(try_dst)){
-    if(!overwrite){
+    if(overwrite){
+      dst = try_dst
+    } else {
       stop(cat('Destination folder ', outname, 
                ' already exists and overwrite is not TRUE', sep = ''))
     }
-    dst = try_dst
   } else {
     dst = try_dst
     dir.create(dst)
