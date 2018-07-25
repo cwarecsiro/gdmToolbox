@@ -49,7 +49,11 @@ gdm.variable_significance = function(data, dst, outname = 'gdm_variable_signific
         numpreds = (ncol(fread(data, nrows = 1L)) - 6) / 2
       }
     } else {
-      stop('Cannot determine class of input data')
+      stop(
+        cat('Cannot determine class of input data', 
+            paste('should be a', paste(class_opts, collapse = ', '), 
+            'object, or a filepath'), sep = '\n')
+        )
     }  
   }
   
