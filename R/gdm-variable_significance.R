@@ -10,7 +10,7 @@
 #'@param load_output (boolean) If TRUE (default) output files will be loaded into memory in a list.
 #'@param verbose (boolean) Print out messages to console. Default: FALSE
 #'
-#'@return Files written to dst.
+#'@return Files written to dst, or if load_output = TRUE, the output tables read in as a list.
 #'
 #'@examples gdm.variable_select(inputTable, dst_dir, analysis_1, 50, TRUE, FALSE, TRUE)
 #'

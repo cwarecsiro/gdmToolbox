@@ -11,7 +11,7 @@
 
 gdm.variable_selection = function(data, dst = NULL, outname = NULL, ...){
   if (is.null(dst)) dst = tempdir()
-  if (is.null(outname)) outname = 'gdm_variable_significnace'
+  if (is.null(outname)) outname = 'gdm_variable_significance'
   
   pass_args = list(
     data = data, 
