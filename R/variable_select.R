@@ -1,4 +1,4 @@
-#'@title GDM variable selection
+#'@title GDM variable significance 
 #'
 #'@description Perform backward elimination to determine variable significance in a gdm 
 #'
@@ -22,14 +22,14 @@
 #'
 #'@export
 
-gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
-                               permutations = 100, geo = TRUE, load_output = TRUE,
-                               verbose = FALSE){
+gdm.variable_significance = function(data, dst, outname = 'gdm_variable_significnace',
+                               permutations = 100, geo = TRUE, overwrite = FALSE, 
+                               load_output = TRUE, verbose = FALSE){
   
   ## check what data is
   data_class = class(data)
-  in_memory = sum(unlist(lapply(c('data.frame', 'matrix', 'data.table'), 
-                         function(x) grep(x, data_class))))
+  class_opts = c('data.frame', 'matrix', 'data.table')
+  in_memory = sum(unlist(lapply(class_opts, function(x) grep(x, data_class))))
   if(in_memory > 0){
     ## in memory is true
     data = data.frame(data)
@@ -40,7 +40,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
     data = tmp_loc
   
   } else {
-    ## probably filepath - double check
+    ## should be a filepath - double check
     if(data_class == 'character'){
       ## assume filepath
       if (!file.exists(data)){
@@ -56,12 +56,13 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   ## dst arg must exist
   assert_that(is.notempty.string(dst))
   
-  ## check dst is not empty
+  ## check dst is empty
   try_dst = paste0(dst, '/', outname)
   if(file.exists(try_dst)){
-    warning(cat('Destination folder ', outname, ' already exists -\n', 
-                  'a new sub folder will be created in this folder',
-            sep = ''))
+    if(!overwrite){
+      stop(cat('Destination folder ', outname, 
+               ' already exists and overwrite is not TRUE', sep = ''))
+    }
     dst = try_dst
   } else {
     dst = try_dst
@@ -71,7 +72,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   ## check permutations arg
   assert_that(is.numeric(permutations))
   
-  ## geo
+  ## check geo
   assert_that(is.logical(geo))  
 
   if (verbose){
@@ -113,7 +114,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   do_geo = geo
   
   if (verbose) {
-    cat('Beginning significance testing', sep = '\n')
+    cat('Beginning significance testing...', sep = '\n')
   }
   
   z0 <- .C( "SaveGDMParams", 
@@ -124,7 +125,7 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
             as.integer(do_geo), PACKAGE = 'gdmToolbox')
   
   if (verbose) {
-    cat('Parameter file written', sep = '\n')
+    cat('... Parameter file written...', sep = '\n')
   }
   
   fullparamfilepath <- paste0(wdpath, "\\", paramFilePath)
@@ -132,8 +133,8 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
             PACKAGE = 'gdmToolbox')
   
   if (verbose) {
-    cat(paste('Testing', numpreds, 'predictors, using',
-              permutations, 'permutations'), sep = '\n')
+    cat(paste('\t', '... Testing', numpreds, 'predictors, using',
+              permutations, 'permutations...'), sep = '\n')
   }
   
   z2 <- .C( "DoSigTestGDM", fullparamfilepath, as.integer(permutations), 
@@ -155,6 +156,50 @@ gdm.variable_select = function(data, dst, outname = 'gdm_variable_selection',
   
 }
 
+
+#'@title GDM variable selection
+#'
+#'@description Provides an automated way to select a single model using gdm.variable_significance output
+#'
+#'@param data (string, data.frame or matrix). Input table, can be in memory (data.frame or matrix) or filepath to .CSV
+#'@param dst (string) Filepath to write outputs to. A subdir (taking the name of outname below) will be created here. Default (NULL) will write to a temporary dir.
+#'@param outname (string) Filename to use for writing outputs. Default (NULL) will assign name of 'gdm_variable_significance.'
+#'@param ... Other args to be passed to \code{\link{gdm.variable_significance}}
+#'
+#'@export
+
+gdm.variable_selection = function(data, dst = NULL, outname = NULL, ...){
+  if (is.null(dst)) dst = tempdir()
+  if (is.null(outname)) outname = 'gdm_variable_significnace'
+  
+  pass_args = list(
+    data = data, 
+    dst = dst,
+    outname = outname,
+    load_output = TRUE
+  )
+  
+  user_args = list(...)
+  if (length(user_args)) {
+    opts = formals(gdm.variable_significance)
+    for (i in 1:length(user_args)) {
+      this_opt <- names(user_args)[i]
+      if (! (this_opt %in% names(opts))) {
+        cat(paste0("'", this_opt, "'", ' is not a valid option. Should be one of:'), 
+            names(opts), sep = '\n')
+      } else {
+        pass_args[[this_opt]] = paste(user_args[i])
+      }
+    } # end user_opts 
+  } 
+  
+  outputs = do.call(gdm.variable_significance, pass_args)
+  
+  ## do something with outputs...
+  ## just return them for now
+  return(outputs)
+  
+}
 
 
 #'@title Helper
